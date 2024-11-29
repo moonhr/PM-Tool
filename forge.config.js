@@ -51,6 +51,12 @@ module.exports = {
             ],
           },
           entry: "./src/main/main.ts",
+          resolve: {
+            extensions: [".ts", ".js"], // Include TypeScript and JavaScript
+          },
+          output: {
+            filename: "[name].js", // Output filename (e.g., main.js)
+          },
         },
         renderer: {
           config: {
@@ -63,8 +69,8 @@ module.exports = {
                       loader: "babel-loader",
                       options: {
                         presets: [
+                          ["@babel/preset-react", { runtime: "automatic" }], // 자동 JSX 변환 활성화
                           "@babel/preset-env",
-                          "@babel/preset-react",
                           "@babel/preset-typescript",
                         ],
                       },
