@@ -1,5 +1,6 @@
-const { FusesPlugin } = require('@electron-forge/plugin-fuses');
-const { FuseV1Options, FuseVersion } = require('@electron/fuses');
+//* electron forge 설정파일. 빌드 및 패키징에 관한 설정을 정의
+const { FusesPlugin } = require("@electron-forge/plugin-fuses");
+const { FuseV1Options, FuseVersion } = require("@electron/fuses");
 
 module.exports = {
   packagerConfig: {
@@ -8,27 +9,23 @@ module.exports = {
   rebuildConfig: {},
   makers: [
     {
-      name: '@electron-forge/maker-squirrel',
+      name: "@electron-forge/maker-squirrel",
       config: {},
     },
     {
-      name: '@electron-forge/maker-zip',
-      platforms: ['darwin'],
+      name: "@electron-forge/maker-zip",
+      platforms: ["darwin"],
     },
     {
-      name: '@electron-forge/maker-deb',
+      name: "@electron-forge/maker-deb",
       config: {},
     },
     {
-      name: '@electron-forge/maker-rpm',
+      name: "@electron-forge/maker-rpm",
       config: {},
     },
   ],
   plugins: [
-    {
-      name: '@electron-forge/plugin-auto-unpack-natives',
-      config: {},
-    },
     // Fuses are used to enable/disable various Electron functionality
     // at package time, before code signing the application
     new FusesPlugin({
@@ -40,5 +37,63 @@ module.exports = {
       [FuseV1Options.EnableEmbeddedAsarIntegrityValidation]: true,
       [FuseV1Options.OnlyLoadAppFromAsar]: true,
     }),
+    {
+      name: "@electron-forge/plugin-webpack",
+      config: {
+        mainConfig: {
+          module: {
+            rules: [
+              {
+                test: /\.ts$/,
+                use: "ts-loader",
+                exclude: /node_modules/,
+              },
+            ],
+          },
+          entry: "./src/main/main.ts",
+        },
+        renderer: {
+          config: {
+            module: {
+              rules: [
+                {
+                  test: /\.(ts|tsx)$/,
+                  use: [
+                    {
+                      loader: "babel-loader",
+                      options: {
+                        presets: [
+                          "@babel/preset-env",
+                          "@babel/preset-react",
+                          "@babel/preset-typescript",
+                        ],
+                      },
+                    },
+                  ],
+                  exclude: /node_modules/,
+                },
+                {
+                  test: /\.css$/,
+                  use: ["style-loader", "css-loader"],
+                },
+              ],
+            },
+            resolve: {
+              extensions: [".ts", ".tsx", ".js", ".jsx"],
+            },
+          },
+          entryPoints: [
+            {
+              name: "main_window",
+              html: "./src/public/index.html",
+              js: "./src/renderer/renderer.tsx",
+              preload: {
+                js: "./src/main/preload.ts",
+              },
+            },
+          ],
+        },
+      },
+    },
   ],
 };
