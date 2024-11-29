@@ -2,6 +2,7 @@ import React, { useState } from "react";
 
 interface Task {
   id: string;
+  tag: string;
   name: string;
 }
 
@@ -13,14 +14,38 @@ const RepositoryTaskManager: React.FC<RepositoryTaskManagerProps> = ({
   repository,
 }) => {
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [isComposing, setIsComposing] = useState(false);
+
+  // 태그를 영문과 숫자가 혼합된 랜덤 4글자로 생성하는 함수
+  const generateRandomTag = (): string => {
+    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let tag = "";
+    for (let i = 0; i < 4; i++) {
+      tag += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return tag;
+  };
 
   const addTask = (taskName: string) => {
-    const newTask: Task = {
-      id: new Date().toISOString(),
-      name: taskName,
-    };
+    setTasks((prevTasks) => [
+      ...prevTasks,
+      {
+        id: new Date().toISOString(),
+        tag: generateRandomTag(),
+        name: taskName,
+      },
+    ]);
+  };
 
-    setTasks([...tasks, newTask]);
+  const removeTask = (taskId: string) => {
+    setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && !isComposing && e.currentTarget.value.trim()) {
+      addTask(e.currentTarget.value);
+      e.currentTarget.value = "";
+    }
   };
 
   return (
@@ -29,16 +54,16 @@ const RepositoryTaskManager: React.FC<RepositoryTaskManagerProps> = ({
       <input
         type="text"
         placeholder="Enter task name"
-        onKeyDown={(e) => {
-          if (e.key === "Enter" && e.currentTarget.value) {
-            addTask(e.currentTarget.value);
-            e.currentTarget.value = "";
-          }
-        }}
+        onCompositionStart={() => setIsComposing(true)}
+        onCompositionEnd={() => setIsComposing(false)}
+        onKeyDown={handleKeyDown}
       />
       <ul>
         {tasks.map((task) => (
-          <li key={task.id}>{task.name}</li>
+          <li key={task.id}>
+            {task.name} (Tag: {task.tag})
+            <button onClick={() => removeTask(task.id)}>삭제</button>
+          </li>
         ))}
       </ul>
     </div>
