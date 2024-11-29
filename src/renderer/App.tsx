@@ -1,5 +1,5 @@
 import React from "react";
-import RepositoryManager from "./components/RepositoryManager";
+import RepositoryManager from "./components/repository/RepositoryManager";
 
 export const App = () => {
   return (
