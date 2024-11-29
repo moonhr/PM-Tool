@@ -1,13 +1,20 @@
 // * 메인 프로세스 진입점.
-import { app, BrowserWindow, ipcMain } from "electron";
+import { app, BrowserWindow, ipcMain, dialog } from "electron";
+import { saveRepositories, loadRepositories } from "./repositoryStore";
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
+let mainWindow: BrowserWindow | null = null;
+
+// 창 생성 함수
 function createWindow() {
-  const mainWindow = new BrowserWindow({
+  if (mainWindow) return;
+
+  mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
+    show: false,
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
       nodeIntegration: false,
@@ -15,31 +22,62 @@ function createWindow() {
     },
   });
 
-  // Webpack 플러그인이 제공하는 렌더러 프로세스 경로 로드
-  mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
+  mainWindow.once("ready-to-show", () => {
+    mainWindow!.show();
+    mainWindow!.webContents.openDevTools();
+  });
+
+  mainWindow.on("closed", () => {
+    mainWindow = null;
+  });
+
+  mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY).catch((error) => {
+    console.error("Failed to load renderer process:", error);
+  });
 }
 
-app.on("ready", () => {
-  createWindow();
+// 애플리케이션 이벤트 처리
+app.on("ready", createWindow);
 
-  // macOS에서 애플리케이션이 활성화되었을 때 창 생성
-  app.on("activate", () => {
-    if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow();
-    }
-  });
+app.on("activate", () => {
+  if (BrowserWindow.getAllWindows().length === 0) {
+    createWindow();
+  }
 });
 
-// macOS가 아닌 환경에서는 모든 창이 닫히면 애플리케이션 종료
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
     app.quit();
   }
 });
 
-// IPC 통신 이벤트 핸들러 등록
-ipcMain.on("channel", (event, message) => {
-  console.log(`메시지 수신: ${message}`);
-  // 필요한 로직 추가: 메시지 처리, 응답 등
-  event.reply("channel-reply", `Received: ${message}`);
+// IPC 핸들러 등록
+ipcMain.handle("repository:save", async (_, repositories) => {
+  try {
+    saveRepositories(repositories);
+  } catch (error) {
+    console.error("Failed to save repositories:", error);
+    throw error;
+  }
+});
+
+ipcMain.handle("repository:load", async () => {
+  try {
+    return loadRepositories();
+  } catch (error) {
+    console.error("Failed to load repositories:", error);
+    throw error;
+  }
+});
+
+ipcMain.handle("dialog:open-directory", async () => {
+  try {
+    const result = await dialog.showOpenDialog(mainWindow!, {
+      properties: ["openDirectory"],
+    });
+    return result.canceled ? null : result.filePaths[0];
+  } catch (error) {
+    console.error("Failed to open directory dialog:", error);
+    throw error;
+  }
 });
