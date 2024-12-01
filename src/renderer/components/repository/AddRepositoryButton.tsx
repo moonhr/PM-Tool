@@ -6,7 +6,7 @@ interface AddRepositoryButtonProps {
 
 const AddRepositoryButton: React.FC<AddRepositoryButtonProps> = ({ onAdd }) => {
   const handleAddRepository = async () => {
-    const selectedPath = await window.Electron.openDirectoryDialog();
+    const selectedPath = await window.electronApi.openDirectoryDialog();
     if (selectedPath) {
       onAdd(selectedPath);
     }
