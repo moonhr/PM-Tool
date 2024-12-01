@@ -1,5 +1,6 @@
 // * 메인 프로세스 진입점.
 import { app, BrowserWindow, ipcMain, dialog } from "electron";
+import { exec } from "child_process";
 import { saveRepositories, loadRepositories } from "./repositoryStore";
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
@@ -78,6 +79,22 @@ ipcMain.handle("dialog:open-directory", async () => {
     return result.canceled ? null : result.filePaths[0];
   } catch (error) {
     console.error("Failed to open directory dialog:", error);
+    throw error;
+  }
+});
+
+// IPC 핸들러에서 Git 브랜치 생성하기
+ipcMain.handle("git:create-branch", async (_, branchName: string) => {
+  try {
+    exec(`git checkout -b ${branchName}`, (error, stdout, stderr) => {
+      if (error) {
+        console.error(`Error creating branch: ${stderr}`);
+        throw new Error(stderr);
+      }
+      console.log(`Branch created: ${stdout}`);
+    });
+  } catch (error) {
+    console.error("Failed to create Git branch:", error);
     throw error;
   }
 });
