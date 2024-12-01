@@ -29,4 +29,11 @@ contextBridge.exposeInMainWorld("Electron", {
       return null;
     }
   },
+  createBranch: async (branchName: string): Promise<void> => {
+    try {
+      await ipcRenderer.invoke("git:create-branch", branchName);
+    } catch (error) {
+      console.error("Failed to create branch:", error);
+    }
+  },
 });

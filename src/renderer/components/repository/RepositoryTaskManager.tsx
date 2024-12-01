@@ -48,6 +48,16 @@ const RepositoryTaskManager: React.FC<RepositoryTaskManagerProps> = ({
     }
   };
 
+  // 태그 클릭 시 Git 브랜치 생성 요청 보내기
+  const handleTagClick = async (tag: string) => {
+    try {
+      await window.electronApi.createBranch(tag);
+      alert(`브랜치 ${tag} 생성 완료`);
+    } catch (error) {
+      alert("브랜치 생성 실패");
+    }
+  };
+
   return (
     <div>
       <h3>Tasks for {repository.path}</h3>
@@ -61,7 +71,10 @@ const RepositoryTaskManager: React.FC<RepositoryTaskManagerProps> = ({
       <ul>
         {tasks.map((task) => (
           <li key={task.id}>
-            {task.name} (Tag: {task.tag})
+            {task.name}
+            <button onClick={() => handleTagClick(task.tag)}>
+              {task.tag} 브랜치 생성
+            </button>
             <button onClick={() => removeTask(task.id)}>삭제</button>
           </li>
         ))}

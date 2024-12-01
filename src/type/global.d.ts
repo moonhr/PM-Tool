@@ -1,26 +1,19 @@
-interface Repository {
-  id: string;
-  path: string;
-}
 declare global {
+  interface Repository {
+    id: string;
+    path: string;
+  }
   interface Window {
-    Electron: {
-      /**
-       * Save repositories to the storage.
-       * @param repositories - An array of repositories to save.
-       */
+    // Electron API 객체 정의
+    electronApi: {
+      // 저장소 저장 메서드
       saveRepositories: (repositories: Repository[]) => Promise<void>;
-
-      /**
-       * Load repositories from the storage.
-       * @returns A promise that resolves to an array of repositories.
-       */
-      loadRepositories: () => Repository<any[]>;
-      /**
-       * 파일 탐색기를 열어 디렉토리를 선택하는 함수
-       * @returns 선택한 디렉토리 경로 또는 null
-       */
+      // 저장소 불러오기 메서드
+      loadRepositories: () => Promise<Repository[]>;
+      // 디렉토리 다이얼로그 열기 메서드
       openDirectoryDialog: () => Promise<string | null>;
+      // Git 브랜치 생성 메서드
+      createBranch: (branchName: string) => Promise<void>;
     };
   }
 }
