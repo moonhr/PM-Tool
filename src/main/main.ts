@@ -3,6 +3,11 @@ import { app, BrowserWindow, ipcMain, dialog } from "electron";
 import { exec } from "child_process";
 import { saveRepositories, loadRepositories } from "./repositoryStore";
 
+const path = require("path");
+require("electron-reload")(__dirname, {
+  electron: path.join(__dirname, "node_modules", ".bin", "electron"),
+});
+
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
