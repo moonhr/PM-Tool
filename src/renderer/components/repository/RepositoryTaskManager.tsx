@@ -51,7 +51,7 @@ const RepositoryTaskManager: React.FC<RepositoryTaskManagerProps> = ({
   // 태그 클릭 시 Git 브랜치 생성 요청 보내기
   const handleTagClick = async (tag: string) => {
     try {
-      await window.electronApi.createBranch(tag);
+      await window.Electron.createBranch(tag);
       alert(`브랜치 ${tag} 생성 완료`);
     } catch (error) {
       alert("브랜치 생성 실패");

@@ -3,15 +3,6 @@ import { app, BrowserWindow, ipcMain, dialog } from "electron";
 import { exec } from "child_process";
 import { saveRepositories, loadRepositories } from "./repositoryStore";
 
-try {
-  require("electron-reloader")(module, {
-    debug: true, // 디버그 정보를 콘솔에 출력
-    watchRenderer: true, // 렌더러 프로세스 감시
-  });
-} catch (err) {
-  console.error("Failed to initialize electron-reloader:", err);
-}
-
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 

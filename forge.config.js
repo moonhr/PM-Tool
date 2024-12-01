@@ -55,7 +55,7 @@ module.exports = {
             extensions: [".ts", ".js"], // Include TypeScript and JavaScript
           },
           output: {
-            filename: "[name].js", // Output filename (e.g., main.js)
+            filename: "index.js", // Output filename (e.g., main.js)
           },
         },
         renderer: {

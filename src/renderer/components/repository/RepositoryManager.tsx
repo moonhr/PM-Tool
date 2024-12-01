@@ -15,7 +15,7 @@ const RepositoryManager: React.FC = () => {
 
   useEffect(() => {
     const fetchRepositories = async () => {
-      const loadedRepositories = await window.electronApi.loadRepositories();
+      const loadedRepositories = await window.Electron.loadRepositories();
       if (Array.isArray(loadedRepositories)) {
         setRepositories(loadedRepositories);
       } else {
@@ -38,7 +38,7 @@ const RepositoryManager: React.FC = () => {
 
     const updatedRepositories = [...repositories, newRepository];
     setRepositories(updatedRepositories);
-    window.electronApi.saveRepositories(updatedRepositories);
+    window.Electron.saveRepositories(updatedRepositories);
   };
 
   const handleSelectRepository = (repository: Repository) => {

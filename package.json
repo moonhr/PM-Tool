@@ -1,7 +1,7 @@
 {
   "name": "PM-Tool",
   "version": "1.0.0",
-  "main": "./.webpack/main/main.js",
+  "main": "./.webpack/main",
   "repository": "https://github.com/moonhr/PM-Tool.git",
   "author": "moonhr <moonhr153@gmail.com>",
   "license": "MIT",
@@ -9,11 +9,8 @@
     "start": "electron-forge start",
     "build": "electron-forge package",
     "make": "electron-forge make",
-    "dev": "electron-forge start",
     "test": "jest",
-    "clean" : "rm -rf .webpack && rm -rf out",
-    "preload-watch": "tsc -w --project ./src/main/preload.ts",
-    "renderer-watch": "webpack --config webpack.renderer.config.js --watch"
+    "clean": "rm -rf .webpack && rm -rf out"
   },
   "dependencies": {
     "@types/jest": "^29.5.14",
@@ -44,7 +41,6 @@
     "css-loader": "^7.1.2",
     "electron": "^33.2.1",
     "electron-rebuild": "^3.2.9",
-    "electron-reloader": "^1.2.3",
     "html-webpack-plugin": "^5.6.3",
     "style-loader": "^4.0.0",
     "ts-loader": "^9.5.1",
