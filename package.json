@@ -9,7 +9,11 @@
     "start": "electron-forge start",
     "build": "electron-forge package",
     "make": "electron-forge make",
-    "dev": "electron-forge start"
+    "dev": "electron-forge start",
+    "test": "jest",
+    "clean" : "rm -rf .webpack && rm -rf out",
+    "preload-watch": "tsc -w --project ./src/main/preload.ts",
+    "renderer-watch": "webpack --config webpack.renderer.config.js --watch"
   },
   "dependencies": {
     "@types/jest": "^29.5.14",
